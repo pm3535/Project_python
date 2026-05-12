@@ -27,7 +27,7 @@ class PasswordGenerator(ABC):
         
     class MemorablePasswordGenerator(PasswordGenerator):
 
-      def __init__(
+     def __init__(
         self,
         no_of_words: int = 5,
         separator: str = "-",
@@ -48,6 +48,47 @@ class PasswordGenerator(ABC):
         if self.capitalization:
             password_words = [word.upper() for word in password_words]
         return self.separator.join(password_words)
+    
+    class PincodePasswordGenerator(PasswordGenerator):
+        def __init__(self, length: int = 4):
+            self.length = length
+
+
+        def generate(self) -> str:
+            return ''.join(random.choice(string.digits) for _ in range(self.length))
+        
+        def test_memorable_password_generator():
+         memorable_gen = MemorablePasswordGenerator(
+        no_of_words=4,
+        separator="-",
+        capitalization=True,
+        vocabulary=nltk.corpus.words.words(),
+    )
+    password = memorable_gen.generate()
+    print(password)
+    assert len(password.split('-')) == 4
+    assert all(word[0].isupper() for word in password.split('-'))
+
+
+def test_pincode_generator():
+    pin_gen = PinCodeGenerator(length=4)
+    pin = pin_gen.generate()
+    print(pin)
+    assert len(pin) == 4
+    assert all(char in string.digits for char in pin)
+
+
+def main():
+    print("Testing RandomPasswordGenerator:")
+    test_random_password_generator()
+    print("Testing MemorablePasswordGenerator:")
+    test_memorable_password_generator()
+    print("Testing PinCodeGenerator:")
+    test_pincode_generator()
+
+
+if __name__ == "__main__":
+    main()
 
 
         
